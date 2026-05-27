@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智界教育 ZHIJIE EDUCATION - 引领智慧教育</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            cursor: none;
+            background: #f8f9fc;
+        }
+
+        /* 自定义光标 */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #6c5ce7;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, background 0.2s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: #6c5ce7;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        /* 粒子画布 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 鼠标跟随光效 */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 92, 231, 0.15);
+            box-shadow: 0 1px 10px rgba(0,0,0,0.04);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1a1a2e;
+            letter-spacing: 3px;
+            text-shadow: none;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            from { text-shadow: 0 0 8px rgba(108, 92, 231, 0.2); }
+            to { text-shadow: 0 0 16px rgba(108, 92, 231, 0.4), 0 0 30px rgba(0, 212, 255, 0.2); }
+        }
+
+        .logo span {
+            color: #6c5ce7;
+        }
+
+        .logo-sub {
+            font-size: 0.6rem;
+            display: block;
+            letter-spacing: 2px;
+            color: rgba(0,0,0,0.4);
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #6c5ce7;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #f0edf7 0%, #e8f4fd 50%, #f5f0fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #1a1a2e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 动态网格背景 */
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image:
+                linear-gradient(rgba(108, 92, 231, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108, 92, 231, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 光晕效果 */
+        .hero-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: floatGlow 8s ease-in-out infinite;
+        }
+
+        .hero-glow-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.25) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+        }
+
+        .hero-glow-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -4s;
+        }
+
+        .hero-glow-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(162, 155, 254, 0.2) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -2s;
+        }
+
+        @keyframes floatGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+            50% { transform: translate(30px, -30px) scale(1.1); opacity: 0.5; }
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 8px;
+            position: relative;
+            color: #1a1a2e;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, #6c5ce7, #00d4ff, #6c5ce7);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
+        }
+
+        /* 打字机效果 */
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #6c5ce7;
+            white-space: nowrap;
+            animation: typing 3s steps(30, end), blink 0.75s step-end infinite;
+            color: #555;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #6c5ce7; }
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #1a1a2e;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            transition: all 0.4s;
+            border: 2px solid #6c5ce7;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin: 0 0.5rem;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            transition: left 0.4s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn:hover {
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3),
+                        0 0 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-outline {
+            border-color: #6c5ce7;
+            color: #6c5ce7;
+        }
+
+        .btn-outline::before {
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+        }
+
+        .btn-outline:hover {
+            color: #fff;
+        }
+
+        /* 特色区域 */
+        .features {
+            padding: 5rem 5%;
+            background: #fff;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a2e;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: #888;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(108, 92, 231, 0.08);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            transform: scaleX(0);
+            transition: transform 0.5s;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(108, 92, 231, 0.12),
+                        0 0 0 1px rgba(108, 92, 231, 0.08);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6c5ce7, #00d4ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            position: relative;
+            transition: transform 0.5s;
+        }
+
+        .feature-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(15px);
+            opacity: 0.4;
+            z-index: -1;
+            transition: opacity 0.5s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(180deg);
+        }
+
+        .feature-card:hover .feature-icon::before {
+            opacity: 0.7;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #1a1a2e;
+        }
+
+        .feature-card p {
+            color: #777;
+        }
+
+        /* 课程区域 */
+        .courses {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, #f0edf7 0%, #e8f4fd 50%, #f5f0fa 100%);
+            color: #1a1a2e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .courses::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(108, 92, 231, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 80% 50%, rgba(0, 212, 255, 0.06) 0%, transparent 40%);
+        }
+
+        .courses .section-title h2 {
+            color: #1a1a2e;
+        }
+
+        .courses .section-title p {
+            color: #888;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .course-card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(108, 92, 231, 0.08);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(108, 92, 231, 0.06), transparent);
+            transition: left 0.5s;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .course-card:hover::before {
+            left: 100%;
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(108, 92, 231, 0.25);
+            box-shadow: 0 20px 40px rgba(108, 92, 231, 0.12),
+                        0 0 30px rgba(108, 92, 231, 0.06);
+        }
+
+        .course-image {
+            height: 220px;
+            background: linear-gradient(135deg, #e8ecf1 0%, #f0f4f8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-image::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.12) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .course-card:hover .course-image::after {
+            opacity: 1;
+        }
+
+        .course-info {
+            padding: 1.5rem;
+        }
+
+        .course-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #1a1a2e;
+            transition: color 0.3s;
+        }
+
+        .course-card:hover .course-info h3 {
+            color: #6c5ce7;
+        }
+
+        .course-info p {
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .course-info .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(108, 92, 231, 0.1);
+            color: #6c5ce7;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .course-info .tag.hot {
+            background: rgba(0, 212, 255, 0.12);
+            color: #0098b8;
+        }
+
+        /* Slogan 区域 */
+        .slogan {
+            padding: 8rem 5%;
+            background: linear-gradient(135deg, #6c5ce7, #00d4ff, #6c5ce7);
+            background-size: 200% 200%;
+            animation: gradientBg 5s ease infinite;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .slogan::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: patternMove 30s linear infinite;
+        }
+
+        @keyframes patternMove {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .slogan h2 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 5px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .slogan p {
+            font-size: 1.4rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 关于区域 */
+        .about {
+            padding: 5rem 5%;
+            background: #fff;
+            position: relative;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #1a1a2e;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-text h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            border-radius: 2px;
+        }
+
+        .about-text p {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fc;
+            border-radius: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(108, 92, 231, 0.08);
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.08);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #6c5ce7, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .about-image {
+            height: 400px;
+            background: linear-gradient(135deg, #e8ecf1, #f0f4f8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(108, 92, 231, 0.15) 0%, transparent 50%);
+        }
+
+        .about-image::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 70%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+
+        /* 页脚 */
+        footer {
+            background: #f0f2f5;
+            color: #333;
+            padding: 4rem 5% 2rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(108, 92, 231, 0.3), transparent);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #6c5ce7;
+            position: relative;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #6c5ce7;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .footer-section ul li a:hover {
+            color: #6c5ce7;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            color: #999;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c5ce7;
+            text-decoration: none;
+            transition: all 0.4s;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .social-links a:hover {
+            background: #6c5ce7;
+            color: #fff;
+            border-color: #6c5ce7;
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.25);
+        }
+
+        /* 滚动指示器 */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+
+        .scroll-indicator.hidden {
+            opacity: 0;
+        }
+
+        .scroll-indicator .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid rgba(108, 92, 231, 0.4);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scroll-indicator .wheel {
+            width: 4px;
+            height: 10px;
+            background: #6c5ce7;
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollWheel 1.5s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% { opacity: 1; top: 8px; }
+            100% { opacity: 0; top: 30px; }
+        }
+
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1a1a2e;
+            letter-spacing: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .loader-logo span {
+            color: #6c5ce7;
+        }
+
+        .loader-sub {
+            font-size: 0.8rem;
+            color: rgba(0,0,0,0.35);
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #6c5ce7, #00d4ff);
+            border-radius: 2px;
+            animation: loadProgress 2s ease-out forwards;
+        }
+
+        @keyframes loadProgress {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+
+            .cursor, .cursor-dot {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+                letter-spacing: 3px;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .typewriter {
+                white-space: normal;
+                border-right: none;
+                animation: none;
+            }
+
+            .btn-outline {
+                display: block;
+                margin: 1rem auto 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .slogan h2 {
+                font-size: 2rem;
+            }
+
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .mouse-glow {
+                display: none;
+            }
+
+            .btn {
+                display: block;
+                margin: 0.5rem auto;
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">智界教育</div>
+            <div class="loader-sub">ZHIJIE EDUCATION</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定义光标 -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- 鼠标跟随光效 -->
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <!-- 粒子背景 -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- 滚动指示器 -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <div class="mouse">
+            <div class="wheel"></div>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="logo">
+            智界教育
+            <span class="logo-sub">ZHIJIE EDUCATION</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">首页</a></li>
+            <li><a href="#courses">课程</a></li>
+            <li><a href="#features">特色</a></li>
+            <li><a href="#about">关于</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero" id="home">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-glow hero-glow-3"></div>
+        <div class="hero-content">
+            <h1>智启<span>未来</span></h1>
+            <p class="typewriter">AI赋能教育，开启智慧学习新时代</p>
+            <a href="#courses" class="btn">探索课程</a>
+            <a href="#about" class="btn btn-outline">了解更多</a>
+        </div>
+    </section>
+
+    <!-- 特色区域 -->
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>为什么选择我们</h2>
+            <p>专业品质，值得信赖</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>顶尖师资</h3>
+                <p>来自全球名校的资深导师团队，为你带来最前沿的知识体系</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI 个性化教学</h3>
+                <p>智能学习系统，根据你的水平量身定制最优学习路径</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>实战项目驱动</h3>
+                <p>真实企业项目实战，学以致用，毕业即具备行业竞争力</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>终身学习体系</h3>
+                <p>课程持续更新，校友终身免费回看，与时代保持同频</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 课程区域 -->
+    <section class="courses" id="courses">
+        <div class="section-title">
+            <h2>热门课程</h2>
+            <p>精选明星课程，助你掌握未来核心技能</p>
+        </div>
+        <div class="courses-grid">
+            <div class="course-card">
+                <div class="course-image">🧠</div>
+                <div class="course-info">
+                    <h3>AI 人工智能实战</h3>
+                    <p>从机器学习到大模型应用，全面掌握 AI 核心技术</p>
+                    <span class="tag hot">热门</span>
+                    <span class="tag">128课时</span>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-image">🐍</div>
+                <div class="course-info">
+                    <h3>Python 全栈开发</h3>
+                    <p>覆盖前后端、数据库、云部署的完整开发技能体系</p>
+                    <span class="tag hot">推荐</span>
+                    <span class="tag">96课时</span>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-image">🎨</div>
+                <div class="course-info">
+                    <h3>数字艺术与设计</h3>
+                    <p>UI/UX、插画、3D建模，释放你的创意潜能</p>
+                    <span class="tag">72课时</span>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-image">🌍</div>
+                <div class="course-info">
+                    <h3>国际语言培训</h3>
+                    <p>英语、日语、韩语沉浸式教学，轻松突破语言关</p>
+                    <span class="tag hot">新上</span>
+                    <span class="tag">64课时</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 口号区域 -->
+    <section class="slogan">
+        <h2>智领未来</h2>
+        <p>让每个人都能享受优质教育的力量</p>
+    </section>
+
+    <!-- 关于区域 -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>关于 智界教育</h2>
+                <p>成立于 2011 年，智界教育始终致力于用科技推动教育变革。我们相信，优质的教育资源应该触手可及，每个人都应该有机会通过学习改变命运。</p>
+                <p>从 AI 人工智能到数字艺术，从编程开发到语言培训，我们的课程体系覆盖未来最核心的技能领域。十年来，已帮助超过 10 万名学员实现职业进阶与个人成长。</p>
+                <div class="about-stats">
+                    <div class="stat">
+                        <div class="stat-number" data-target="15">0</div>
+                        <div class="stat-label">年教育经验</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-target="500" data-suffix="+">0</div>
+                        <div class="stat-label">精品课程</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-target="10" data-suffix="万+">0</div>
+                        <div class="stat-label">累计学员</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-target="98">0</div>
+                        <div class="stat-label">% 好评率</div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-image">📚</div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>智界教育</h3>
+                <p style="color:#666;">ZHIJIE EDUCATION<br>用科技点亮教育未来</p>
+                <div class="social-links">
+                    <a href="#">微</a>
+                    <a href="#">博</a>
+                    <a href="#">抖</a>
+                    <a href="#">B</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>课程体系</h3>
+                <ul>
+                    <li><a href="#">AI 人工智能</a></li>
+                    <li><a href="#">Python 开发</a></li>
+                    <li><a href="#">数字艺术</a></li>
+                    <li><a href="#">语言培训</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>学员服务</h3>
+                <ul>
+                    <li><a href="#">学习路径</a></li>
+                    <li><a href="#">职业规划</a></li>
+                    <li><a href="#">就业推荐</a></li>
+                    <li><a href="#">常见问题</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>联系我们</h3>
+                <ul style="color:#666;">
+                    <li>咨询热线: 400-688-8888</li>
+                    <li>服务时间: 9:00 - 21:00</li>
+                    <li>邮箱: contact@zhijie.edu</li>
+                    <li>地址: 北京市海淀区中关村科技园</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 智界教育 ZHIJIE EDUCATION. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 加载动画
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loader').classList.add('hidden');
+            }, 2000);
+        });
+
+        // 自定义光标
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+        const mouseGlow = document.getElementById('mouseGlow');
+
+        document.addEventListener('mousemove', function(e) {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 3 + 'px';
+            cursorDot.style.top = e.clientY - 3 + 'px';
+            mouseGlow.style.left = e.clientX + 'px';
+            mouseGlow.style.top = e.clientY + 'px';
+        });
+
+        // 悬停效果
+        document.querySelectorAll('a, button, .btn, .feature-card, .course-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // 粒子背景
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.3 + 0.1;
+                this.hue = Math.random() < 0.5 ? '108, 92, 231' : '0, 212, 255';
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(${this.hue}, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 创建粒子
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        const midHue = particles[i].hue === particles[j].hue ? particles[i].hue : '150, 130, 240';
+                        ctx.strokeStyle = `rgba(${midHue}, ${0.06 * (1 - distance / 120)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            const scrollIndicator = document.getElementById('scrollIndicator');
+
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(255, 255, 255, 0.98)';
+                nav.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.08)';
+            } else {
+                nav.style.background = 'rgba(255, 255, 255, 0.92)';
+                nav.style.boxShadow = '0 1px 10px rgba(0,0,0,0.04)';
+            }
+
+            // 隐藏滚动指示器
+            if (window.scrollY > 100) {
+                scrollIndicator.classList.add('hidden');
+            } else {
+                scrollIndicator.classList.remove('hidden');
+            }
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .course-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // 数字滚动动画
+        const statNumbers = document.querySelectorAll('.stat-number');
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const finalValue = parseInt(target.dataset.target);
+                    const suffix = target.dataset.suffix || '';
+                    let currentValue = 0;
+                    const duration = 2000;
+                    const increment = finalValue / (duration / 16);
+
+                    const counter = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            currentValue = finalValue;
+                            clearInterval(counter);
+                        }
+                        target.textContent = Math.floor(currentValue) + suffix;
+                    }, 16);
+
+                    statObserver.unobserve(target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(stat => statObserver.observe(stat));
+
+        // 视差效果
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const heroGlows = document.querySelectorAll('.hero-glow');
+
+            heroGlows.forEach((glow, index) => {
+                const speed = 0.3 + index * 0.1;
+                glow.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
